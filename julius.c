@@ -5,6 +5,31 @@
 #include <string.h>
 #include <ctype.h>
 
+char * lire_stdin(){
+	size_t maxtab = 100; //initialise le nb de caractères pour le buffer de caractères
+	size_t position = 0; //lecture caractère par caractère
+	char * buffer = malloc(maxtab * sizeof(char));
+	int c;
+	//on parcourt stdin jusqu'à ce qu'on arrive au dernier retour charriot
+	while((c =  fgetc(stdin))!='\n' && !feof(stdin)){
+		buffer[position] = c;
+		//on controle s'il reste de l'espace mémoire
+		if (++position == maxtab){
+			//s'il n'en reste pas, on alloue deux fois la taille allouée
+			buffer = realloc(buffer, (maxtab*=2) * sizeof(char));
+		}
+		
+		
+		
+		
+	}
+	buffer = realloc(buffer, (position + 1) * sizeof(char));
+	buffer[maxtab] ='\0';
+	
+	return buffer;
+
+}
+
 void chiffre(char chaine[], int shift){
 	int i=0;
 	

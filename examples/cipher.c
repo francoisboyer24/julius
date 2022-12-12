@@ -1,19 +1,24 @@
 #include <julius.h>
 #include <stdio.h>
-#define MAXLEN 100
+#include <stdlib.h>
 
 int main(void) {
-	char text[MAXLEN];
+	
   	int key;
   	
   	printf("Enter a message to encrypt: ");
+  	// utilisation de la fonction de la librairie lire_stdin
 	
-  	fgets(text, MAXLEN, stdin);
+	char * text = lire_stdin();
 
   	printf("Enter the key: ");
 	//il faut rentrer un entier ici, sinon renvoyer un message d'erreur approprié
   	scanf("%d", & key);
+  	//fonction de chiffrement
 	chiffre(text,key);
+	//ne pas oublier de vider le buffer
+	free(text);
+	return 0;
 		
 	
 }
