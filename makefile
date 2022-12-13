@@ -1,52 +1,68 @@
 all: libs cesar
 
-cesar : build/cesarstat build/cesardyn build/cipherstat build/cipherdyn build/cipher_filestat build/cipher_filedyn
+cesar : bin/cesarstat bin/cesardyn bin/cipherstat bin/cipherdyn bin/cipher_filestat bin/cipher_filedyn
 libs :lib/libjulius.a lib/libjulius.so
 
-export LD_LIBRARY_PATH = $(pwd)
+#LD_LIBRARY_PATH=${ld_library_path}
 
-CPFLAGS=-I.$(LD_LIBRARY_PATH)/include
+
+CPFLAGS=-I./include
 #option -I <=> chemin des fichiers d'entetes inclus avec #include <>
 
-LDFLAGS=-L.$(LD_LIBRARY_PATH)/lib
+LDFLAGS=-L./lib
 #option -L <=> chemin des librairies non standards
 
+#mise en place du mode verbose
+#V = 1
+ifeq ($V,1)
+A=
+else 
+A=@
+endif
 
-
-julius.o : julius.c 
-	gcc $(CPFLAGS) -c julius.c -o julius.o 
+build/julius.o : ./src/julius.c 
+	@echo "On compile $< pour produire $@"
+	$A gcc $(CPFLAGS) -c ./src/julius.c -o build/julius.o 
 
 #production de la librairie statique
-lib/libjulius.a : julius.o
-	ar qvs lib/libjulius.a julius.o
+lib/libjulius.a : build/julius.o
+	@echo "On compile $< pour produire la librairie statique $@"
+	$A ar qvs lib/libjulius.a build/julius.o
 
 #production de la librairie dynamique
-lib/julius_fpic.o : julius.c 
-	gcc -c -fPIC julius.c -o lib/julius_fpic.o
+build/julius_fPic.o : src/julius.c 
+	$A gcc -fPIC -c src/julius.c -o build/julius_fPic.o
 
-lib/libjulius.so : lib/julius_fpic.o
-	gcc -shared lib/julius_fpic.o -o lib/libjulius.so
+lib/libjulius.so : build/julius_fPic.o
+	@echo "On compile $< pour produire la librairie dynamique $@"
+	$A gcc -shared build/julius_fPic.o -o lib/libjulius.so
 	
 
 # demander une édition de liens statique avec la lib julius : -l<NOM>
-build/cesarstat: examples/cesar.c
-	gcc $(CPFLAGS) -static examples/cesar.c $(LDFLAGS) -ljulius -o build/cesarstat 
+bin/cesarstat: examples/cesar.c
+	@echo "Edition de lien statique pour $< avec la librairie julius"
+	$A gcc $(CPFLAGS) -static examples/cesar.c $(LDFLAGS) -ljulius -o bin/cesarstat 
 	
-build/cipherstat: examples/cipher.c
-	gcc $(CPFLAGS) -static examples/cipher.c $(LDFLAGS) -ljulius -o build/cipherstat 
+bin/cipherstat: examples/cipher.c
+	@echo "Edition de lien statique pour $< avec la librairie julius"
+	$A gcc $(CPFLAGS) -static examples/cipher.c $(LDFLAGS) -ljulius -o bin/cipherstat 
 
-build/cipher_filestat: examples/cipher_file.c
-	gcc $(CPFLAGS) -static examples/cipher_file.c $(LDFLAGS) -ljulius -o build/cipher_filestat 
+bin/cipher_filestat: examples/cipher_file.c
+	@echo "Edition de lien statique pour $< avec la librairie julius"
+	$A gcc $(CPFLAGS) -static examples/cipher_file.c $(LDFLAGS) -ljulius -o bin/cipher_filestat 
 
-# demander une édition de liens dynamique avec la lib println : -l<NOM>
-build/cesardyn: examples/cesar.c 
-	gcc $(CPFLAGS) examples/cesar.c $(LDFLAGS) -ljulius -o build/cesardyn 
+# demander une édition de liens dynamique avec la lib julius : -l<NOM>
+bin/cesardyn: examples/cesar.c
+	@echo "Edition de lien dynamique pour $< avec la librairie julius"
+	$A gcc $(CPFLAGS) $(LDFLAGS) examples/cesar.c -o bin/cesardyn -ljulius
 
-build/cipherdyn: examples/cipher.c 
-	gcc $(CPFLAGS) examples/cipher.c $(LDFLAGS) -ljulius -o build/cipherdyn 
+bin/cipherdyn: examples/cipher.c
+	@echo "Edition de lien dynamique pour $< avec la librairie julius" 
+	gcc $(CPFLAGS) $(LDFLAGS) examples/cipher.c -o bin/cipherdyn -ljulius 
 
-build/cipher_filedyn: examples/cipher_file.c 
-	gcc $(CPFLAGS) examples/cipher_file.c $(LDFLAGS) -ljulius -o build/cipher_filedyn 
+bin/cipher_filedyn: examples/cipher_file.c
+	@echo "Edition de lien dynamique pour $< avec la librairie julius" 
+	gcc $(CPFLAGS) $(LDFLAGS) examples/cipher_file.c -o bin/cipher_filedyn -ljulius 
 
 clean: 
-	rm -rf build/* lib/* *.o
+	rm -rf ./build/*.o ./bin/* *.o *.exe *.a *.sa
