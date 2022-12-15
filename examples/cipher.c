@@ -9,7 +9,7 @@ int main(void) {
   	printf("Enter a message to encrypt: ");
   	// utilisation de la fonction de la librairie lire_stdin
 	
-	char * text = lire_stdin();
+	char * text = lire(stdin);
 
   	printf("Enter the key: ");
 	//il faut rentrer un entier ici, sinon renvoyer un message d'erreur approprié

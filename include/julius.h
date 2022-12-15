@@ -1,7 +1,6 @@
-#define DEBUG
-
+#include <stdio.h>
 void chiffre(char chaine[], int shift);
-char * lire_stdin(); 
+char * lire(FILE *fichier); 
 //void cipher(char chaine[], int shift);
 //void cesar(char chaine[], int shift);
 
