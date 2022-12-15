@@ -3,8 +3,6 @@ all: libs cesar
 cesar : bin/cesarstat bin/cesardyn bin/cipherstat bin/cipherdyn bin/cipher_filestat bin/cipher_filedyn
 libs :lib/libjulius.a lib/libjulius.so
 
-#LD_LIBRARY_PATH=${ld_library_path}
-
 
 CPFLAGS=-I./include
 #option -I <=> chemin des fichiers d'entetes inclus avec #include <>
